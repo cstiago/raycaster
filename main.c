@@ -11,22 +11,36 @@ const unsigned int TILE_SIZE = 32;
 
 const double PLAYER_SPEED = 15.;
 
-int hz_walls[][3] = {{1, 1, 3}, {2, 3, 9}, {8, 5, 14}};
-int hz_walls_qty = sizeof(hz_walls) / (sizeof(hz_walls[0][0]) * 3);
+int map[MAP_WIDTH][MAP_HEIGHT];
 
-int vt_walls[][3] = {{1, 1, 3}};
-int vt_walls_qty = sizeof(vt_walls) / (sizeof(vt_walls[0][0]) * 3);
+int walls[][4] = {
+    {1, 1, 3, 1},
+    {1, 2, 9, 2},
+    {8, 5, 14, 5},
+    {7, 7, 9, 9}
+};
+int walls_qty = sizeof(walls) / (sizeof(walls[0][0]) * 4);
 
 double player_x, player_y;
 
-void drawMap2D() {
+void setWalls() {
+    for(int i = 0; i < walls_qty; i++) {
+        for(int x = walls[i][0]; x < walls[i][1]; x++) {
+            for(int y = walls[i][2]; y < walls[i][3]; y++) {
+                map[x][y] = 1;
+            }
+        }
+    }
+}
+
+void drawWalls() {
     glColor3f(1,1,1);
 
-    for(int i = 0; i < hz_walls_qty; i++) {
-        int xi = hz_walls[i][1] * TILE_SIZE;
-        int yi = hz_walls[i][0] * TILE_SIZE;
-        int xf = (hz_walls[i][2] + 1) * TILE_SIZE;
-        int yf = yi + TILE_SIZE;
+    for(int i = 0; i < walls_qty; i++) {
+        int xi = walls[i][0] * TILE_SIZE;
+        int yi = walls[i][1] * TILE_SIZE;
+        int xf = (walls[i][2] + 1) * TILE_SIZE;
+        int yf = (walls[i][3] + 1) * TILE_SIZE;
 
         glBegin(GL_QUADS);
         glVertex2i(xi, yi);
@@ -61,7 +75,7 @@ void handleKeypress(unsigned char key, int x, int y) {
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    drawMap2D();
+    drawWalls();
     drawPlayer();
     glutSwapBuffers();
 }
@@ -78,6 +92,7 @@ int main(int argc, char* argv[]) {
     glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     glutCreateWindow("Raycaster");
 
+    setWalls();
     init();
 
     glutDisplayFunc(display);
