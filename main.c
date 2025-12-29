@@ -14,6 +14,10 @@ const double PLAYER_SPEED = 15.;
 int map[MAP_WIDTH][MAP_HEIGHT];
 
 int walls[][4] = {
+    {0, 0, MAP_WIDTH-1, 0},
+    {MAP_WIDTH-1, 0, MAP_WIDTH-1, MAP_HEIGHT-1},
+    {MAP_WIDTH-1, MAP_HEIGHT-1, 0, MAP_HEIGHT-1},
+    {0, MAP_HEIGHT-1, 0, 0},
     {1, 1, 3, 1},
     {1, 2, 9, 2},
     {8, 5, 14, 5},
@@ -22,6 +26,9 @@ int walls[][4] = {
 int walls_qty = sizeof(walls) / (sizeof(walls[0][0]) * 4);
 
 double player_x, player_y;
+
+double min(double a, double b) {return a < b ? a : b;}
+double max(double a, double b) {return a > b ? a : b;}
 
 void setWalls() {
     for(int i = 0; i < walls_qty; i++) {
@@ -37,10 +44,10 @@ void drawWalls() {
     glColor3f(1,1,1);
 
     for(int i = 0; i < walls_qty; i++) {
-        int xi = walls[i][0] * TILE_SIZE;
-        int yi = walls[i][1] * TILE_SIZE;
-        int xf = (walls[i][2] + 1) * TILE_SIZE;
-        int yf = (walls[i][3] + 1) * TILE_SIZE;
+        int xi = min(walls[i][0], walls[i][2]) * TILE_SIZE;
+        int yi = min(walls[i][1], walls[i][3]) * TILE_SIZE;
+        int xf = (max(walls[i][2], walls[i][0]) + 1) * TILE_SIZE;
+        int yf = (max(walls[i][3], walls[i][1]) + 1) * TILE_SIZE;
 
         glBegin(GL_QUADS);
         glVertex2i(xi, yi);
