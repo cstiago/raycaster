@@ -31,29 +31,36 @@ double player_x, player_y, player_angle, player_mov_x, player_mov_y;
 
 void setWalls() {
     for(int i = 0; i < walls_qty; i++) {
-        for(int x = walls[i][0]; x < walls[i][1]; x++) {
-            for(int y = walls[i][2]; y < walls[i][3]; y++) {
+        for(int x = fmin(walls[i][0], walls[i][2]); x <= fmax(walls[i][0], walls[i][2]); x++) {
+            for(int y = fmin(walls[i][1], walls[i][3]); y <= fmax(walls[i][1], walls[i][3]); y++) {
                 map[x][y] = 1;
             }
         }
     }
 }
 
-void drawWalls() {
-    glColor3f(1,1,1);
+void drawMap2D() {
+    for(int i = 0; i < MAP_WIDTH; i++) {
+        for(int j = 0; j < MAP_HEIGHT; j++) {
+            if(map[i][j] == 1) {
+                glColor3f(1,1,1);
+            }
+            else {
+                glColor3f(0,0,0);
+            }
 
-    for(int i = 0; i < walls_qty; i++) {
-        int xi = fmin(walls[i][0], walls[i][2]) * TILE_SIZE;
-        int yi = fmin(walls[i][1], walls[i][3]) * TILE_SIZE;
-        int xf = (fmax(walls[i][2], walls[i][0]) + 1) * TILE_SIZE;
-        int yf = (fmax(walls[i][3], walls[i][1]) + 1) * TILE_SIZE;
+            int xi = i * TILE_SIZE + 1;
+            int yi = j * TILE_SIZE + 1;
+            int xf = (i + 1) * TILE_SIZE - 1;
+            int yf = (j + 1) * TILE_SIZE - 1;
 
-        glBegin(GL_QUADS);
-        glVertex2i(xi, yi);
-        glVertex2i(xf, yi);
-        glVertex2i(xf, yf);
-        glVertex2i(xi, yf);
-        glEnd();
+            glBegin(GL_QUADS);
+            glVertex2i(xi, yi);
+            glVertex2i(xf, yi);
+            glVertex2i(xf, yf);
+            glVertex2i(xi, yf);
+            glEnd();
+        }
     }
 }
 
@@ -100,7 +107,7 @@ void handleKeypress(unsigned char key, int x, int y) {
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    drawWalls();
+    drawMap2D();
     drawPlayer();
     glutSwapBuffers();
 }
@@ -108,6 +115,8 @@ void display() {
 void init() {
     glClearColor(0.3, 0.3, 0.3, 0);
     gluOrtho2D(0, 1024, 512, 0);
+    
+    setWalls();
     setPlayerPosition(150, 150);
 }
 
@@ -117,7 +126,6 @@ int main(int argc, char* argv[]) {
     glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     glutCreateWindow("Raycaster");
 
-    setWalls();
     init();
 
     glutDisplayFunc(display);
