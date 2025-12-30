@@ -29,7 +29,8 @@ int walls[][4] = {
 };
 int walls_qty = sizeof(walls) / (sizeof(walls[0][0]) * 4);
 
-double player_x, player_y, player_angle, player_mov_x, player_mov_y;
+double player_x = 150, player_y = 150;
+double player_angle = 0, player_mov_x, player_mov_y;
 
 void setWalls() {
     for(int i = 0; i < walls_qty; i++) {
@@ -84,11 +85,7 @@ void drawPlayer() {
     glEnd();
 }
 
-void setPlayerPosition(double x, double y) {
-    player_x = x; player_y = y;
-}
-
-void updateAngleMovement(double player_angle) {
+void updatePlayerAngleMovement() {
     player_mov_x = cos(player_angle);
     player_mov_y = sin(player_angle);
 }
@@ -98,12 +95,12 @@ void handleKeypress(unsigned char key, int x, int y) {
         case 'a':
             player_angle -= PLAYER_ANG_SPEED;
             if(player_angle < 0) {player_angle += 2*PI;}
-            updateAngleMovement(player_angle);
+            updatePlayerAngleMovement();
             break;
         case 'd':
             player_angle += PLAYER_ANG_SPEED;
             if(player_angle > 2*PI) {player_angle -= 2*PI;}
-            updateAngleMovement(player_angle);
+            updatePlayerAngleMovement();
             break;
         case 'w':
             player_x += player_mov_x * PLAYER_MOV_SPEED;
@@ -129,7 +126,7 @@ void init() {
     gluOrtho2D(0, 1024, 512, 0);
     
     setWalls();
-    setPlayerPosition(150, 150);
+    updatePlayerAngleMovement();
 }
 
 int main(int argc, char* argv[]) {
