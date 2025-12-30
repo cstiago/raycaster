@@ -12,7 +12,9 @@
 #define SCREEN_WIDTH 512
 #define SCREEN_HEIGHT 256
 
-const double PLAYER_MOV_SPEED = 15.;
+const double PLAYER_VISION_SIZE = 25.;
+
+const double PLAYER_MOV_SPEED = 10.;
 const double PLAYER_ANG_SPEED = .2;
 
 int map[MAP_WIDTH][MAP_HEIGHT];
@@ -69,6 +71,16 @@ void drawPlayer() {
     glPointSize(10);
     glBegin(GL_POINTS);
     glVertex2i(player_x, player_y);
+    glEnd();
+
+    glColor3f(1,1,0);
+    glLineWidth(3);
+    glBegin(GL_LINES);
+    glVertex2i(player_x, player_y);
+    glVertex2i(
+        player_x + player_mov_x * PLAYER_VISION_SIZE,
+        player_y + player_mov_y * PLAYER_VISION_SIZE
+    );
     glEnd();
 }
 
